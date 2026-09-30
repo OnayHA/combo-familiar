@@ -249,7 +249,39 @@
   .total-inner{background:rgba(28,42,74,.95)}
   .total-inner .lbl span{color:rgba(244,242,238,.6)}
   .total-inner .lbl small{color:rgba(244,242,238,.8)}
-  #payLine{color:#ff9a6b !important}
+  /* ---- pestañas Artículos / Divisas ---- */
+  .tabs{position:relative;display:grid;grid-template-columns:1fr 1fr;margin:-6px 0 18px;padding:4px;background:var(--paper2);border:1px solid var(--line);border-radius:16px;box-shadow:inset 0 1px 2px rgba(28,42,74,.06)}
+  .tab-ind{position:absolute;top:4px;bottom:4px;left:4px;width:calc(50% - 4px);border-radius:12px;background:var(--ink);box-shadow:0 6px 16px -6px rgba(28,42,74,.55);transition:transform .38s cubic-bezier(.3,1.35,.5,1)}
+  .tab-ind::after{content:"";position:absolute;left:22%;right:22%;bottom:5px;height:3px;border-radius:3px;background:var(--accent)}
+  .tabs.div .tab-ind{transform:translateX(100%)}
+  .tab{position:relative;z-index:1;border:none;background:transparent;padding:12px 8px 14px;font-family:'Manrope',system-ui,sans-serif;font-size:15px;font-weight:700;color:var(--ink-soft);cursor:pointer;border-radius:12px;transition:color .25s;display:flex;align-items:center;justify-content:center;gap:7px;-webkit-tap-highlight-color:transparent}
+  .tab.on{color:#f4f2ee}
+  .tab:active{transform:scale(.97)}
+  .tab-n{font-size:12px;font-weight:700;min-width:20px;padding:1px 7px;border-radius:999px;background:rgba(28,42,74,.1);color:var(--ink-soft)}
+  .tab.on .tab-n{background:rgba(255,255,255,.16);color:#fff}
+  .tab-n:empty{display:none}
+  #tabDivN.on{background:var(--accent);color:#fff;animation:divPulse 2.4s ease-in-out infinite}
+  .pane{animation:paneIn .32s ease both}
+  .pane.hidden{display:none}
+  @keyframes paneIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  .pane .envio{margin-top:0}
+  @media (prefers-reduced-motion:reduce){.tab-ind,.pane,#tabDivN.on{transition:none;animation:none}}
+  /* renglón resumen: Artículos N · Divisa X (la divisa late cuando va incluida) */
+  .sum-row{display:flex;align-items:baseline;gap:6px;flex-wrap:wrap;column-gap:8px;row-gap:4px;font-size:12.5px}
+  .total-inner .lbl .sum-row span{font-size:inherit;letter-spacing:0;text-transform:none;color:inherit}
+  .div-chip{white-space:nowrap}
+  .total-inner{gap:12px}
+  .sum-row b{font-family:'Manrope',system-ui,sans-serif;font-weight:700;color:#f4f2ee}
+  .sum-k{opacity:.7}
+  .div-chip:not(.on)::before{content:'·';margin-right:3px}
+  .total-inner .lbl .sum-row .div-chip.on{color:#ff9a6b}
+  .div-chip{display:inline-flex;align-items:baseline;gap:5px}
+  .div-chip:not(.on){opacity:.45}
+  .div-chip.on{color:#ff9a6b;background:rgba(255,154,107,.14);border-radius:999px;padding:1px 8px;margin:-1px 0;animation:divPulse 2.4s ease-in-out infinite}
+  .div-chip.on b{color:#ff9a6b}
+  .div-chip.on .sum-k{opacity:1}
+  @keyframes divPulse{0%,100%{box-shadow:0 0 0 0 rgba(255,154,107,0);background:rgba(255,154,107,.14)}50%{box-shadow:0 0 0 4px rgba(255,154,107,.16);background:rgba(255,154,107,.28)}}
+  @media (prefers-reduced-motion:reduce){.div-chip.on{animation:none}}
   .total-amount{background:linear-gradient(180deg,#ffb491,#ff7a45);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent}
 
   /* ---- tasas con botones 1 / 50 / 100 / Otro ---- */
@@ -260,6 +292,9 @@
   .envio-num.sm{width:70px}
   .rate .envio-num:not(.sm){width:120px}
   .rate-eq{font-size:12.5px;color:var(--ink-soft);font-style:italic}
+  .rate-at{font-size:12px;color:var(--olive);font-weight:600}
+  .rate-at::before{content:'🕒 '}
+  .rate-at.old{color:#c2410c}
   .envio-res .mn-amt{color:var(--olive)}
 
   /* ---- ventanas (pregunta de partición / imágenes listas) ---- */
@@ -362,6 +397,13 @@
     </div>
   </header>
 
+  <div class="tabs" role="tablist">
+    <span class="tab-ind" aria-hidden="true"></span>
+    <button class="tab on" id="tabArt" role="tab" aria-selected="true" data-pane="art">🛒 Artículos <b class="tab-n" id="tabArtN">0</b></button>
+    <button class="tab" id="tabDiv" role="tab" aria-selected="false" data-pane="div">💸 Divisas <b class="tab-n" id="tabDivN"></b></button>
+  </div>
+
+  <section class="pane" id="paneArt" role="tabpanel">
   <div id="list" class="list"><div class="loading">Cargando tu lista…</div></div>
 
   <div class="add-zone">
@@ -374,7 +416,9 @@
     <input id="newPrice" type="number" inputmode="decimal" placeholder="Precio $" step="0.01" min="0">
     <button class="add-btn" id="addBtn">＋</button>
   </div>
+  </section>
 
+  <section class="pane hidden" id="paneDiv" role="tabpanel">
   <div class="envio">
     <div class="envio-top">
       <span class="envio-title">💸 Envío · Divisa</span>
@@ -385,6 +429,7 @@
     </div>
     <div class="envio-body" id="envioBody"></div>
   </div>
+  </section>
 
   <div class="tools">
     <button class="cta-btn" id="quoteBtn">📋 Cotizar</button>
@@ -403,7 +448,7 @@
 
 <div class="total-bar">
   <div class="total-inner">
-    <div class="lbl"><span>Total General</span><small id="itemCount">0 artículos</small><small id="payLine" style="color:#e9b24a"></small></div>
+    <div class="lbl"><span>Total General</span><small class="sum-row"><span class="sum-k">Artículos</span> <b id="itemCount">0</b><span id="divChip" class="div-chip"><span class="sum-k">Divisa</span> <b id="divAmt"></b></span></small></div>
     <div class="total-amount" id="totalAmount">$0</div>
   </div>
 </div>
@@ -494,7 +539,7 @@ function mkRate(r,defV,defBase){
   r=r||{};
   const hasBase = r.base!==undefined && r.base!=='' && r.base!==null;
   const base = hasBase ? num(r.base) : defBase;
-  return {v: r.v!==undefined ? r.v : defV, base, custom: r.custom!==undefined ? !!r.custom : (hasBase && !STD_BASES.includes(base))};
+  return {v: r.v!==undefined ? r.v : defV, base, custom: r.custom!==undefined ? !!r.custom : (hasBase && !STD_BASES.includes(base)), at: r.at||null};
 }
 function applyMetaFrom(m){
   m=m||{};
@@ -533,6 +578,29 @@ function rateEqText(k){
   const p1=v/b;
   return k==='mn' ? '= '+fmtNum(p1)+' CUP por 1 USD' : '= $'+p1.toFixed(2)+' por cada 1 USD enviado';
 }
+// Cuándo se registró la tasa: "hoy, 14:35" · "ayer, 09:10" · "28 sep, 09:10"
+function rateStampText(k){
+  const r=meta[k]; if(num(r.v)<=0) return '';
+  if(!r.at) return 'Tasa sin fecha de registro — vuelve a escribirla para fecharla';
+  const d=new Date(r.at), now=new Date();
+  const day=x=>new Date(x.getFullYear(),x.getMonth(),x.getDate()).getTime();
+  const diff=Math.round((day(now)-day(d))/864e5);
+  const hora=d.toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'});
+  const cuando = diff===0 ? 'hoy' : diff===1 ? 'ayer' : d.toLocaleDateString('es-ES',{day:'numeric',month:'short'})+(d.getFullYear()!==now.getFullYear()?' '+d.getFullYear():'');
+  return 'Tasa registrada '+cuando+', '+hora;
+}
+function rateIsToday(k){ const r=meta[k]; if(!r.at) return false; const d=new Date(r.at), n=new Date(); return d.toDateString()===n.toDateString(); }
+const TAB_KEY='combo-tab';
+function showTab(t){
+  const d = t==='div';
+  document.querySelector('.tabs').classList.toggle('div', d);
+  [['tabArt','paneArt',!d],['tabDiv','paneDiv',d]].forEach(([tb,pn,on])=>{
+    const b=document.getElementById(tb); b.classList.toggle('on',on); b.setAttribute('aria-selected',on);
+    document.getElementById(pn).classList.toggle('hidden',!on);
+  });
+  document.getElementById('clearBtn').classList.toggle('hidden', d);   // «Vaciar todo» es de Artículos
+  try{ localStorage.setItem(TAB_KEY, d?'div':'art'); }catch(e){}
+}
 function grandTotal(){ return calcTotal() + envioInfo().pay; }
 
 function rateBlock(k,prefix,before,after){
@@ -551,7 +619,7 @@ function rateBlock(k,prefix,before,after){
       ${r.custom?`<input id="${k}Base" class="envio-num sm" type="number" inputmode="decimal" min="0" step="any" value="${r.base===undefined?'':r.base}" placeholder="ej. 20">`:''}
       <span class="lab">USD</span>
     </div>
-    <div class="rate-eq" id="${k}Eq"></div>
+    <div class="rate-eq" id="${k}Eq"></div>${k==='mn'?'<div class="rate-at" id="mnAt"></div>':''}
   </div>`;
 }
 function renderEnvio(){
@@ -560,7 +628,7 @@ function renderEnvio(){
   const body=document.getElementById('envioBody');
   const montoRow=`<div class="envio-row">
       <span class="lab">Monto a enviar: $</span>
-      <input id="montoInput" class="envio-num" type="number" inputmode="decimal" min="0" step="1" value="${meta.monto||''}" placeholder="50">
+      <input id="montoInput" class="envio-num" type="number" inputmode="decimal" min="0" step="1" value="${meta.monto||''}" placeholder="0">
       <span class="lab">USD</span>
     </div>`;
   let keys;
@@ -577,11 +645,11 @@ function renderEnvio(){
   keys.forEach(k=>{
     const vi=body.querySelector('#'+k+'Val');
     vi.oninput=()=>{ meta[k].v=vi.value; updateTotal(); };
-    vi.onchange=()=>{ meta[k].v=vi.value; persistMeta(); updateTotal(true); };
+    vi.onchange=()=>{ meta[k].v=vi.value; if(k==='mn') meta.mn.at=Date.now(); persistMeta(); updateTotal(true); };
     const bi=body.querySelector('#'+k+'Base');
     if(bi){
       bi.oninput=()=>{ meta[k].base=bi.value; updateTotal(); };
-      bi.onchange=()=>{ meta[k].base=bi.value; persistMeta(); updateTotal(true); };
+      bi.onchange=()=>{ meta[k].base=bi.value; if(k==='mn') meta.mn.at=Date.now(); persistMeta(); updateTotal(true); };
     }
   });
   body.querySelectorAll('[data-rk]').forEach(b=>{
@@ -589,6 +657,7 @@ function renderEnvio(){
       const r=meta[b.dataset.rk], v=b.dataset.b;
       if(v==='c'){ r.custom=true; if(STD_BASES.includes(num(r.base))) r.base=''; }
       else{ r.custom=false; r.base=Number(v); }
+      if(b.dataset.rk==='mn' && v!=='c') r.at=Date.now();
       persistMeta(); renderEnvio(); updateTotal(true);
     };
   });
@@ -596,26 +665,23 @@ function renderEnvio(){
 }
 function updateEnvioRes(){
   ['mn','usdA','usdB'].forEach(k=>{ const el=document.getElementById(k+'Eq'); if(el) el.textContent=rateEqText(k); });
+  const at=document.getElementById('mnAt');
+  if(at){ at.textContent=rateStampText('mn'); at.classList.toggle('old', num(meta.mn.v)>0 && !rateIsToday('mn')); }
   const box=document.getElementById('envioRes');
   if(!box) return;
   const e=envioInfo();
-  const pl=document.getElementById('payLine');
   if(e.monto<=0){
     box.innerHTML='Pon el monto que quieres enviar.';
-    pl.textContent='';
     return;
   }
   if(e.mode==='MN'){
     if(e.tasa>0){
       box.innerHTML=`Reciben <span class="mn-amt">${fmtMN(e.mn)}</span> · Cuesta <b>${fmt(e.pay)}</b> (sumado al total)`;
-      pl.textContent='Envío '+fmt(e.pay)+' → '+fmtMN(e.mn);
     }else{
       box.innerHTML='Pon la tasa del día para ver la conversión.';
-      pl.textContent='';
     }
   }else{
     box.innerHTML=`Reciben ${fmt(e.monto)} USD · Cuesta <b>${fmt(e.pay)}</b>${e.fee>0?' (comisión '+fmt(e.fee)+')':''} — sumado al total`;
-    pl.textContent='Envío '+fmt(e.pay)+' incluido';
   }
 }
 
@@ -624,7 +690,15 @@ function updateTotal(bump){
   el.textContent=fmt(grandTotal());
   const c=products.filter(isActive).length;
   const e=envioInfo();
-  document.getElementById('itemCount').textContent = (c===1?'1 artículo':c+' artículos')+(e.monto>0?' + envío':'');
+  document.getElementById('itemCount').textContent = c;
+  document.getElementById('tabArtN').textContent = c;
+  const tdn=document.getElementById('tabDivN');
+  tdn.textContent = e.monto>0 ? fmtNum(e.monto)+' USD' : '';
+  tdn.classList.toggle('on', e.monto>0);
+  const on=e.monto>0;
+  document.getElementById('divChip').classList.toggle('on',on);
+  document.getElementById('divAmt').textContent = !on ? '' :
+    e.mode==='MN' ? (e.tasa>0 ? fmtMN(e.mn) : fmtNum(e.monto)+' USD · sin tasa') : fmtNum(e.monto)+' USD';
   if(bump){el.classList.remove('bump');void el.offsetWidth;el.classList.add('bump');}
   updateEnvioRes();
   const q=document.getElementById('quote');
@@ -829,16 +903,18 @@ document.getElementById('newType').onchange=e=>{
 };
 
 document.getElementById('resetBtn').onclick=()=>{
-  if(confirm('¿Poner todas las cantidades en 0 para un combo nuevo?\n(El catálogo, precios y presentaciones se mantienen.)')){
+  if(confirm('¿Poner todas las cantidades y el envío de divisa en 0 para un combo nuevo?\n(El catálogo, precios, presentaciones y tasas se mantienen.)')){
     products.forEach(p=>{ if(p.type==='cotizado')p.lines=[]; else p.qty=0; });
-    render();save();
+    meta.monto=''; persistMeta(); renderEnvio();
+    render();save(); updateTotal(true);
   }
 };
 
 document.getElementById('clearBtn').onclick=()=>{
-  if(products.length===0){alert('El catálogo ya está vacío.');return;}
-  if(confirm('¿Borrar TODOS los productos para empezar de cero?\nEsto elimina el catálogo completo. No se puede deshacer.')){
-    products=[]; render(); save();
+  if(products.length===0 && num(meta.monto)<=0){alert('El catálogo ya está vacío.');return;}
+  if(confirm('¿Borrar TODOS los productos y poner el envío de divisa en 0?\nEsto elimina el catálogo completo. No se puede deshacer.\n(Las tasas y comisiones se mantienen.)')){
+    products=[]; meta.monto=''; persistMeta(); renderEnvio();
+    render(); save(); updateTotal(true);
   }
 };
 
@@ -861,8 +937,12 @@ function bindMeta(){
     el.onblur=()=>{ meta[el.dataset.meta]=el.textContent.trim(); persistMeta(); };
     el.onkeydown=e=>{ if(e.key==='Enter'){e.preventDefault();el.blur();} };
   });
-  document.getElementById('divUSD').onclick=()=>{ meta.divisa='USD'; persistMeta(); renderEnvio(); };
-  document.getElementById('divMN').onclick =()=>{ meta.divisa='MN';  persistMeta(); renderEnvio(); };
+  document.getElementById('tabArt').onclick=()=>showTab('art');
+  document.getElementById('tabDiv').onclick=()=>showTab('div');
+  let savedTab='art'; try{ savedTab=localStorage.getItem(TAB_KEY)||'art'; }catch(e){}
+  showTab(savedTab);
+  document.getElementById('divUSD').onclick=()=>{ meta.divisa='USD'; persistMeta(); renderEnvio(); updateTotal(true); };
+  document.getElementById('divMN').onclick =()=>{ meta.divisa='MN';  persistMeta(); renderEnvio(); updateTotal(true); };
 }
 
 const LIMIT_ONE = 25;   // hasta esta cantidad de líneas: una sola imagen, sin preguntar

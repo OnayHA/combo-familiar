@@ -1,5 +1,5 @@
 // Service worker — Combo Familiar. Sube VERSION cuando publiques cambios para forzar la actualización.
-const VERSION = 'combo-v3';
+const VERSION = 'combo-v4';
 const CORE = ['./', 'index.html', 'manifest.webmanifest', 'icon-192.png', 'icon-512.png', 'icon-maskable-512.png', 'apple-touch-icon.png', 'html2canvas.min.js', 'fonts/fonts.css', 'fonts/manrope-latin.woff2', 'fonts/manrope-latin-ext.woff2'];
 
 self.addEventListener('install', e => {
